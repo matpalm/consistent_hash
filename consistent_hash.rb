@@ -1,4 +1,3 @@
-#!/usr/bin/env ruby
 require 'set'
 
 class ConsistentHash
@@ -83,41 +82,6 @@ class ConsistentHash
   end
 
 end
-
-def allocations_for_hash x
-  (0...x.hash_max).step(x.hash_max/1000).collect do |i|
-    x.server_for_hashcode i
-  end
-end
-
-def allocation_differences msg, a0, a1
-  same = []
-  a0.zip(a1).each do |x,y|
-    same << (x==y)
-  end
-  num_same = same.select{|f|f}.size
-  num_changed = same.size - num_same
-  puts "#{msg}: num_same=#{num_same} num_changed=#{num_changed}"
-end
-
-colours = ['a'=>[1,0,0], 'b'=>[1,1,0], 'c'=>[0,1,0], 'd'=>[0,1,1], 'e'=>[0,0,1]]
-
-mod_5 = '01234'.chars.to_a
-mod_4 = '0123'.chars.to_a
-allocation_differences '5 -> 4 % hash', mod_5 * 200, mod_4 * 250
-
-div_5 = ['0']*200 + ['1']*200 + ['2']*200 + ['3']*200 + ['4']*200
-div_4 = ['0']*250 + ['1']*250 + ['2']*250 + ['3']*250
-allocation_differences '5 -> 4 / hash', div_5, div_4
-
-x = ConsistentHash.new :seed => 234
-%w{server0 server1 server2 server3 server4}.each { |s| x.add_server s }
-allocs_s01234 = allocations_for_hash x
-x.debug_dump_of_slot_allocation
-%w{server4}.each { |s| x.remove_server s }
-allocs_s0123 = allocations_for_hash x
-x.debug_dump_of_slot_allocation
-allocation_differences 'consistent_hash', allocs_s01234, allocs_s0123
 
 
 
