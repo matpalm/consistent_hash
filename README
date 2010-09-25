@@ -1,0 +1,3 @@
+sudo apt-get install libcairo2 libcairo-ruby libcairo2-dev
+gem install cairo
+./main.rb

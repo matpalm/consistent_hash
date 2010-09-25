@@ -1,17 +1,13 @@
 require 'set'
 
-UHASH_MAX = 90107
-#M = 2305843009213693951
-R = 20 # length of hash seed; average length in bytes of what you're hashing
-
 class ConsistentHash
-
-  DFT_NUM_SLOTS_PER_SERVER = 20
 
   attr_reader :server_slots
 
   def initialize opts={}
-    @num_slots = opts[:num_slots] || DFT_NUM_SLOTS_PER_SERVER
+    @num_slots = opts[:num_slots] || 20
+    @uhash_max = opts[:uhash_max] || 90107
+    @seed_length = opts[:seed_length] || 20
     srand(opts[:seed]) if opts.has_key?(:seed)
     @uhashs = []
     @servers = Set.new
@@ -19,7 +15,7 @@ class ConsistentHash
   end
 
   def hash_max
-    UHASH_MAX
+    @uhash_max
   end
 
   def add_server server, num_slots_multiplier = 1
@@ -42,7 +38,7 @@ class ConsistentHash
 
   def ensure_number_uhash_functions_at_least n
     while @uhashs.size < n
-      @uhashs << Uhash.new
+      @uhashs << Uhash.new(@uhash_max, @seed_length)
     end
   end
 
@@ -65,10 +61,10 @@ class ConsistentHash
       last_slot = slot
     end
     final_slot, final_server = @server_slots.last
-    proportion_per_server[final_server] += UHASH_MAX - final_slot
+    proportion_per_server[final_server] += @uhash_max - final_slot
     error = 0.0
     proportion_per_server.each do |server,weight|
-      proportion = weight.to_f / UHASH_MAX
+      proportion = weight.to_f / @uhash_max
       error += (proportion-expected_proportion_per_server).abs
       printf "%s => %0.5f ", server, proportion
     end
@@ -79,8 +75,9 @@ end
 
 class Uhash
 
-  def initialize
-    @seed = R.times.collect { rand UHASH_MAX }
+  def initialize uhash_max = 2305843009213693951, seed_length=20
+    @uhash_max = uhash_max
+    @seed = seed_length.times.collect { rand @uhash_max }
   end
 
   def hash_of str
@@ -90,7 +87,7 @@ class Uhash
       seed_idx += 1
       seed_idx %= @seed.length
     end
-    sum % UHASH_MAX
+    sum % @uhash_max
   end
 
 end

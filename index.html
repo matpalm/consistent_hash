@@ -1,33 +1,61 @@
 <html>
+<head>
+  <style type="text/css">
+    p {color:#ffffff;}
+    pre {color:#ffffff;}
+    body {background-color:#111111;}
+    .r {color:#ff0000;}
+    .y {color:#ccff00;}
+    .c {color:#00ff77;}
+    .b {color:#0077ff;}
+    .p {color:#cc00ff;}
+  </style>
+</head>
+<body>
 
   <p>
     <img src="mod_5.png"></br>
     <img src="mod_45_diff.png"></br>
     <img src="mod_4.png"></br>
+    <pre>
+      num_same=20% num_changed=80%
+    </pre>
   </p>
 
   <hr/>
 
-  <p>
+  <p> 
     <img src="div_5.png"></br>
     <img src="div_45_diff.png"></br>
     <img src="div_4.png"></br>
+    <pre>
+      num_same=50% num_changed=50%
+    </pre>
   </p>
 
   <hr/>
 
   <p>
-    <pre>
       1 slot each
-      server0 => 0.31126 server1 => 0.31126 server2 => 0.10722 server3 => 0.03311 server4 => 0.23715  avg err 0.104 (0.20)
-    </pre>
+      <span class="r">server0 => 0.31</span> 
+      <span class="y">server1 => 0.31</span> 
+      <span class="c">server2 => 0.10</span> 
+      <span class="b">server3 => 0.03</span> 
+      <span class="p">server4 => 0.23</span>
+  avg err 0.104 (0.20)
+
+   
     <img src="ch_5_1slots.png"></br>
     <img src="ch_45_diff_1slots.png"></br>
     <img src="ch_4_1slots.png"></br>
-    <pre>
+    <p>
       1 slot each
-      server0 => 0.31126 server1 => 0.54841 server2 => 0.10722 server3 => 0.03311  avg err 0.180 (0.25)
-    </pre>
+      <span class="r">server0 => 0.31</span> 
+      <span class="y">server1 => 0.54</span> 
+      <span class="c">server2 => 0.10</span> 
+      <span class="b">server3 => 0.03</span> 
+
+      num_same=764 (0.77) num_changed=238 (0.23)
   </p>
 
   <hr/>
@@ -43,6 +71,7 @@
     <pre>
       20 slots each
       server0 => 0.22244 server1 => 0.25228 server2 => 0.24438 server3 => 0.28091  avg err 0.017 (0.25)
+      num_same=794 num_changed=208
     </pre>
   </p>
 
@@ -60,5 +89,5 @@
       server0 => 0.18551 server1 => 0.20712 server2 => 0.16547 server3 => 0.11561 server4 => 0.32629  avg err 0.053 (0.16)
     </pre>
   </p>
-
+</body>
 </html>

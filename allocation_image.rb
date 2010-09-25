@@ -14,13 +14,13 @@ module AllocationImage
     column_width = width / num_columns
     column_width = 1 if column_width==0 # rounding grief
 
-    cr = Cairo::Context.new(Cairo::ImageSurface.new(width,50))
+    cr = Cairo::Context.new(Cairo::ImageSurface.new(width,10))
     diffs.each_with_index do |diff, idx|
-      colour = diff ? [1,1,1] : [0,0,0]
+      colour = diff ? [0,0,0] : [1,1,1]
       cr.set_source_rgb(colour)
       lhs = idx * column_width
       rhs = lhs + column_width
-      cr.rectangle(lhs,0, rhs,50)
+      cr.rectangle(lhs,0, rhs,10)
       cr.fill()
     end
     cr.target.write_to_png(filename)
@@ -33,8 +33,9 @@ module AllocationImage
 
     possible_vals = opts[:possible_values]
     val_to_hue = {}
-    possible_vals.each_with_index do |val,idx|
-      val_to_hue[val] = idx.to_f / possible_vals.size
+    possible_vals.each_with_index do |val, idx|
+      hue = idx.to_f / possible_vals.size
+      val_to_hue[val] = hue
     end
 
     filename = opts[:filename]

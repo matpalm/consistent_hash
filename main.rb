@@ -21,10 +21,10 @@ def allocation_differences msg, a0, a1
 end
 
 mod_5 = '01234'.chars.to_a
-AllocationImage::generate :values => mod_5 * 100, :possible_values => mod_5, :filename => 'mod_5.png'
+AllocationImage::generate :values => mod_5 * 20, :possible_values => mod_5, :filename => 'mod_5.png'
 mod_4 = '0123'.chars.to_a
-AllocationImage::generate :values => mod_4 * 125, :possible_values => mod_5, :filename => 'mod_4.png'
-diffs = allocation_differences '5 -> 4 % hash', mod_5 * 100, mod_4 * 125
+AllocationImage::generate :values => mod_4 * 25, :possible_values => mod_5, :filename => 'mod_4.png'
+diffs = allocation_differences '5 -> 4 % hash', mod_5 * 20, mod_4 * 25
 AllocationImage::difference :diffs => diffs, :filename => 'mod_45_diff.png'
 
 
