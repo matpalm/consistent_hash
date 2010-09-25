@@ -1,11 +1,11 @@
 require 'set'
 
+UHASH_MAX = 90107
+#M = 2305843009213693951
+R = 20 # length of hash seed; average length in bytes of what you're hashing
+
 class ConsistentHash
 
-  UHASH_MAX = 90107
-  #M = 2305843009213693951
-
-  R = 20 # length of hash seed; average length in bytes of what you're hashing
   DFT_NUM_SLOTS_PER_SERVER = 20
 
   attr_reader :server_slots
@@ -13,16 +13,24 @@ class ConsistentHash
   def initialize opts={}
     @num_slots = opts[:num_slots] || DFT_NUM_SLOTS_PER_SERVER
     srand(opts[:seed]) if opts.has_key?(:seed)
-    @uhash_seeds = @num_slots.times.collect { uhash_seed }
+    @uhashs = []
     @servers = Set.new
     @server_slots = [] # [ [12,'server1'], [24,'server2'], ... ]
   end
 
-  def add_server server
+  def hash_max
+    UHASH_MAX
+  end
+
+  def add_server server, num_slots_multiplier = 1
     return if @servers.include? server
+    num_slots = @num_slots * num_slots_multiplier
+    ensure_number_uhash_functions_at_least num_slots
     @servers << server
-    slots_for_server = @uhash_seeds.map { |seed| uhash_of(server, seed) }
-    @server_slots += slots_for_server.map { |slot| [slot,server] }
+    @uhashs.slice(0,num_slots).each do |uhash|
+      slot = uhash.hash_of server
+      @server_slots << [slot, server]
+    end
     @server_slots = @server_slots.sort_by { |slot| slot.first }
   end
 
@@ -32,8 +40,10 @@ class ConsistentHash
     @server_slots.reject! { |slot,svr| svr == server }
   end
 
-  def hash_max
-    UHASH_MAX
+  def ensure_number_uhash_functions_at_least n
+    while @uhashs.size < n
+      @uhashs << Uhash.new
+    end
   end
 
   def server_for_hashcode hc
@@ -65,24 +75,22 @@ class ConsistentHash
     printf " avg err %0.3f\n", error/@servers.size
   end
 
-  private
+end
 
-  def uhash_seed
-    a = R.times.collect { rand UHASH_MAX }
+class Uhash
+
+  def initialize
+    @seed = R.times.collect { rand UHASH_MAX }
   end
 
-  def uhash_of str, seed
+  def hash_of str
     sum = seed_idx = 0
     str.bytes.each do |b|
-      sum += b * seed[seed_idx]
+      sum += b * @seed[seed_idx]
       seed_idx += 1
-      seed_idx %= seed.length
+      seed_idx %= @seed.length
     end
     sum % UHASH_MAX
   end
 
 end
-
-
-
-
