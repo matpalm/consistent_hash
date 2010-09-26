@@ -2,7 +2,7 @@ require 'set'
 
 class ConsistentHash
 
-  attr_reader :server_slots
+  attr_reader :server_slots, :uhash_max, :servers
 
   def initialize opts={}
     @num_slots = opts[:num_slots] || 20
@@ -12,10 +12,6 @@ class ConsistentHash
     @uhashs = []
     @servers = Set.new
     @server_slots = [] # [ [12,'server1'], [24,'server2'], ... ]
-  end
-
-  def hash_max
-    @uhash_max
   end
 
   def add_server server, num_slots_multiplier = 1
@@ -47,26 +43,6 @@ class ConsistentHash
       return svr if hc < slot
     end
     return @server_slots.first.last # wrap around case, return first server
-  end
-
-  def debug_dump_of_slot_allocation
-    expected_proportion_per_server = 1.0 / @servers.size
-    last_slot = 0
-    proportion_per_server = Hash.new(0)
-    @server_slots.each do |slot, server|
-      slot_size = slot - last_slot
-      proportion_per_server[server] += slot_size
-      last_slot = slot
-    end
-    final_slot, final_server = @server_slots.last
-    proportion_per_server[final_server] += @uhash_max - final_slot
-    error = 0.0
-    proportion_per_server.each do |server,weight|
-      proportion = weight.to_f / @uhash_max
-      error += (proportion-expected_proportion_per_server).abs
-      printf "%s => %0.5f ", server, proportion
-    end
-    printf " avg err %0.3f\n", error/@servers.size
   end
 
 end
