@@ -88,10 +88,12 @@ AllocationImage::difference :diffs => diffs, :filename => 'div_45_diff.png'
 end
 
 puts "x2 server"
-x = ConsistentHash.new :seed => 234, :num_slots => 5
+
+x = ConsistentHash.new :seed => 24332, :num_slots => 5
 servers = %w{server0 server1 server2 server3}
 servers.each { |s| x.add_server s }
-x.add_server 'server4', 2
+x.add_server 'server4', 3
+servers << 'server4'
 allocs_s01234 = allocations_for_hash x
 AllocationImage::generate :values => allocs_s01234, :possible_values => servers, :filename => "ch_5_5slots_server4x2.png"
 debug_dump_of_slot_allocation x
