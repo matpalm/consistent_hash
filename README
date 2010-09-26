@@ -1,3 +1,5 @@
+this is the code used to generate the page matpalm.com/consistent_hash 
+
 sudo apt-get install libcairo2 libcairo-ruby libcairo2-dev
 gem install cairo
 ./main.rb
