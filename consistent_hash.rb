@@ -43,12 +43,10 @@ class ConsistentHash
   end
 
   def server_for_hashcode hc
-    idx = 0
-    while true do
-      slot, svr = @server_slots[idx]
-      return svr if hc < slot || idx == @server_slots.size-1
-      idx += 1
+    @server_slots.each do |slot,svr|
+      return svr if hc < slot
     end
+    return @server_slots.first.last # wrap around case, return first server
   end
 
   def debug_dump_of_slot_allocation
